@@ -33,17 +33,15 @@ let genrandom (n: int) : string list =
             yield new String(chars)
     ]
 
-// Реализация функции fold 
-let rec list_fold (f: 'a -> 'b -> 'a) (acc: 'a) (lst: 'b list) : 'a =
+// Реализация функции map 
+let rec list_map (f: 'a -> 'b) (lst: 'a list) : 'b list =
     match lst with
-    | [] -> acc
-    | head :: tail -> list_fold f (f acc head) tail
+    | [] -> []
+    | head :: tail -> (f head) :: (list_map f tail)
 
-// Функция для подсчета строк заданной длины
-let count_str (length: int) (lst: string list) : int =
-    let countFunc (acc: int) (s: string) =
-        if s.Length = length then acc + 1 else acc
-    list_fold countFunc 0 lst
+// Функция для добавления символа в начало строки
+let add (c: char) (s: string) : string =
+    c.ToString() + s
 
 // Основная функция программы
 let main () =
@@ -55,20 +53,21 @@ let main () =
     let lst =
         match option with
         | 1 -> 
-            let n = vvod_s_proverkoy "Введите количество элементов списка: "
+            let n = vvod_s_proverkoy "Введите кол-во элементов списка: "
             keyboard n
         | 2 -> 
-            let n = vvod_s_proverkoy "Введите количество элементов списка: "
+            let n = vvod_s_proverkoy "Введите кол-во элементов списка: "
             genrandom n
         | _ -> 
             printfn "Неверный выбор. Программа завершена."
             []
 
     if lst <> [] then
-        let length = vvod_s_proverkoy "Введите длину строки для подсчета: "
-        let count = count_str length lst
+        let c = VYVSTR "Введите символ для добавления в начало строк: "
+        let charToAdd = if c.Length > 0 then c.[0] else ' '
+        let newList = list_map (add charToAdd) lst
         printfn "Исходный список: %A" lst
-        printfn "Количество строк длины %d: %d" length count
+        printfn "Новый список: %A" newList
 
 // Запуск программы
 main ()
